@@ -914,35 +914,308 @@
     <section id="evacuation-routes" class="section">
         <div class="section-header">
             <h2>Safe Evacuation Route Mapping</h2>
-            <p>Dynamic Safe Paths</p>
+            <p>Dynamic Safe Paths & Real-time Route Optimization</p>
         </div>
         <div class="section-content">
             <div class="evacuation-container">
-                <div class="evacuation-map-container">
-                    <div class="map-placeholder">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224346.48127125254!2d79.05663!3d29.3!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39a0a9a0a0a0a0a0%3A0xa0a0a0a0a0a0a0a0!2sNainital%2C%20Uttarakhand!5e0!3m2!1sen!2sin!4v1234567890"
-                            width="100%" 
-                            height="400" 
-                            style="border:0; border-radius: 16px;" 
-                            allowfullscreen="" 
-                            loading="lazy">
-                        </iframe>
-                        <div class="evacuation-overlay">
-                            <div class="route-info">
-                                <h4>Active Evacuation Routes</h4>
-                                <div class="route-list">
-                                    <div class="route-item safe">
-                                        <i class="fas fa-route"></i>
-                                        <span>Route A: Main Highway → Safety Zone 1</span>
-                                        <span class="status">CLEAR</span>
-                                    </div>
-                                    <div class="route-item caution">
-                                        <i class="fas fa-route"></i>
-                                        <span>Route B: Forest Road → Safety Zone 2</span>
-                                        <span class="status">CAUTION</span>
+                <div class="evacuation-main-panel">
+                    <div class="evacuation-map-container">
+                        <div class="map-controls-header">
+                            <div class="map-status">
+                                <div class="status-indicator active">
+                                    <span class="status-dot"></span>
+                                    <span>Live Route Monitoring</span>
+                                </div>
+                                <div class="last-update-time">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span>Updated 30s ago</span>
+                                </div>
+                            </div>
+                            <div class="map-view-controls">
+                                <button class="view-btn active" data-view="routes">
+                                    <i class="fas fa-route"></i>
+                                    <span>Routes</span>
+                                </button>
+                                <button class="view-btn" data-view="terrain">
+                                    <i class="fas fa-mountain"></i>
+                                    <span>Terrain</span>
+                                </button>
+                                <button class="view-btn" data-view="weather">
+                                    <i class="fas fa-cloud"></i>
+                                    <span>Weather</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="interactive-map-wrapper">
+                            <div id="evacuation-map" class="evacuation-map"></div>
+                            
+                            <!-- Enhanced Route Overlay -->
+                            <div class="route-overlay-panel">
+                                <div class="overlay-header">
+                                    <h4>
+                                        <i class="fas fa-shield-alt"></i>
+                                        Active Evacuation Routes
+                                    </h4>
+                                    <div class="route-count">
+                                        <span class="count">4</span>
+                                        <span class="label">Routes Available</span>
                                     </div>
                                 </div>
+                                
+                                <div class="route-list-enhanced">
+                                    <div class="route-item-enhanced primary-route">
+                                        <div class="route-header">
+                                            <div class="route-icon">
+                                                <i class="fas fa-road"></i>
+                                            </div>
+                                            <div class="route-details">
+                                                <span class="route-name">Route A: Main Highway</span>
+                                                <span class="route-destination">→ Safety Zone 1 (Haldwani)</span>
+                                            </div>
+                                            <div class="route-status safe">
+                                                <span class="status-dot"></span>
+                                                <span class="status-text">CLEAR</span>
+                                            </div>
+                                        </div>
+                                        <div class="route-metrics">
+                                            <div class="metric">
+                                                <i class="fas fa-clock"></i>
+                                                <span>25 min</span>
+                                            </div>
+                                            <div class="metric">
+                                                <i class="fas fa-route"></i>
+                                                <span>18.5 km</span>
+                                            </div>
+                                            <div class="metric">
+                                                <i class="fas fa-users"></i>
+                                                <span>2,500 capacity</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="route-item-enhanced secondary-route">
+                                        <div class="route-header">
+                                            <div class="route-icon">
+                                                <i class="fas fa-tree"></i>
+                                            </div>
+                                            <div class="route-details">
+                                                <span class="route-name">Route B: Forest Road</span>
+                                                <span class="route-destination">→ Safety Zone 2 (Kathgodam)</span>
+                                            </div>
+                                            <div class="route-status caution">
+                                                <span class="status-dot"></span>
+                                                <span class="status-text">CAUTION</span>
+                                            </div>
+                                        </div>
+                                        <div class="route-metrics">
+                                            <div class="metric">
+                                                <i class="fas fa-clock"></i>
+                                                <span>35 min</span>
+                                            </div>
+                                            <div class="metric">
+                                                <i class="fas fa-route"></i>
+                                                <span>22.1 km</span>
+                                            </div>
+                                            <div class="metric">
+                                                <i class="fas fa-users"></i>
+                                                <span>1,200 capacity</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="route-item-enhanced emergency-route">
+                                        <div class="route-header">
+                                            <div class="route-icon">
+                                                <i class="fas fa-helicopter"></i>
+                                            </div>
+                                            <div class="route-details">
+                                                <span class="route-name">Route C: Helicopter Evacuation</span>
+                                                <span class="route-destination">→ Emergency Helipad</span>
+                                            </div>
+                                            <div class="route-status emergency">
+                                                <span class="status-dot"></span>
+                                                <span class="status-text">STANDBY</span>
+                                            </div>
+                                        </div>
+                                        <div class="route-metrics">
+                                            <div class="metric">
+                                                <i class="fas fa-clock"></i>
+                                                <span>8 min</span>
+                                            </div>
+                                            <div class="metric">
+                                                <i class="fas fa-route"></i>
+                                                <span>5.2 km</span>
+                                            </div>
+                                            <div class="metric">
+                                                <i class="fas fa-users"></i>
+                                                <span>50 capacity</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="route-actions">
+                                    <button class="route-action-btn primary">
+                                        <i class="fas fa-navigation"></i>
+                                        <span>Optimize Routes</span>
+                                    </button>
+                                    <button class="route-action-btn">
+                                        <i class="fas fa-broadcast-tower"></i>
+                                        <span>Broadcast Alert</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Panel with Safety Zones and Analytics -->
+                <div class="evacuation-side-panel">
+                    <div class="safety-zones-panel">
+                        <h4>
+                            <i class="fas fa-shield-alt"></i>
+                            Safety Zones Status
+                        </h4>
+                        <div class="safety-zones-list">
+                            <div class="safety-zone-card available">
+                                <div class="zone-header">
+                                    <div class="zone-icon">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <div class="zone-info">
+                                        <span class="zone-name">Haldwani Relief Center</span>
+                                        <span class="zone-location">15 km from Nainital</span>
+                                    </div>
+                                </div>
+                                <div class="zone-capacity">
+                                    <div class="capacity-bar">
+                                        <div class="capacity-fill" style="width: 35%"></div>
+                                    </div>
+                                    <div class="capacity-text">1,750 / 5,000</div>
+                                </div>
+                                <div class="zone-status available">
+                                    <span class="status-dot"></span>
+                                    <span>AVAILABLE</span>
+                                </div>
+                            </div>
+                            
+                            <div class="safety-zone-card available">
+                                <div class="zone-header">
+                                    <div class="zone-icon">
+                                        <i class="fas fa-hospital"></i>
+                                    </div>
+                                    <div class="zone-info">
+                                        <span class="zone-name">Kathgodam Medical Center</span>
+                                        <span class="zone-location">20 km from Nainital</span>
+                                    </div>
+                                </div>
+                                <div class="zone-capacity">
+                                    <div class="capacity-bar">
+                                        <div class="capacity-fill" style="width: 65%"></div>
+                                    </div>
+                                    <div class="capacity-text">1,950 / 3,000</div>
+                                </div>
+                                <div class="zone-status limited">
+                                    <span class="status-dot"></span>
+                                    <span>LIMITED</span>
+                                </div>
+                            </div>
+                            
+                            <div class="safety-zone-card full">
+                                <div class="zone-header">
+                                    <div class="zone-icon">
+                                        <i class="fas fa-school"></i>
+                                    </div>
+                                    <div class="zone-info">
+                                        <span class="zone-name">Ramnagar Community Hall</span>
+                                        <span class="zone-location">25 km from Nainital</span>
+                                    </div>
+                                </div>
+                                <div class="zone-capacity">
+                                    <div class="capacity-bar">
+                                        <div class="capacity-fill full" style="width: 100%"></div>
+                                    </div>
+                                    <div class="capacity-text">1,500 / 1,500</div>
+                                </div>
+                                <div class="zone-status full">
+                                    <span class="status-dot"></span>
+                                    <span>FULL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="evacuation-analytics">
+                        <h4>
+                            <i class="fas fa-chart-line"></i>
+                            Evacuation Analytics
+                        </h4>
+                        <div class="analytics-grid">
+                            <div class="analytics-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="card-data">
+                                    <span class="data-value">5,200</span>
+                                    <span class="data-label">People Evacuated</span>
+                                </div>
+                            </div>
+                            <div class="analytics-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="card-data">
+                                    <span class="data-value">18 min</span>
+                                    <span class="data-label">Avg. Evacuation Time</span>
+                                </div>
+                            </div>
+                            <div class="analytics-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-route"></i>
+                                </div>
+                                <div class="card-data">
+                                    <span class="data-value">85%</span>
+                                    <span class="data-label">Route Efficiency</span>
+                                </div>
+                            </div>
+                            <div class="analytics-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="card-data">
+                                    <span class="data-value">2</span>
+                                    <span class="data-label">Blocked Routes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-conditions">
+                        <h4>
+                            <i class="fas fa-cloud-sun"></i>
+                            Route Conditions
+                        </h4>
+                        <div class="conditions-list">
+                            <div class="condition-item">
+                                <i class="fas fa-eye"></i>
+                                <span class="condition-label">Visibility</span>
+                                <span class="condition-value good">Good (8/10)</span>
+                            </div>
+                            <div class="condition-item">
+                                <i class="fas fa-road"></i>
+                                <span class="condition-label">Road Condition</span>
+                                <span class="condition-value fair">Fair (6/10)</span>
+                            </div>
+                            <div class="condition-item">
+                                <i class="fas fa-wind"></i>
+                                <span class="condition-label">Wind Speed</span>
+                                <span class="condition-value caution">High (15 km/h)</span>
+                            </div>
+                            <div class="condition-item">
+                                <i class="fas fa-thermometer-half"></i>
+                                <span class="condition-label">Temperature</span>
+                                <span class="condition-value good">Normal (24°C)</span>
                             </div>
                         </div>
                     </div>

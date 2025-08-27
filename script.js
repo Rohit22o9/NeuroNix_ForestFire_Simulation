@@ -1984,6 +1984,482 @@ function initializeNewFeatures() {
     
     // Recovery Timeline
     initializeRecoveryTimeline();
+    
+    // Enhanced Evacuation Route Mapping
+    initializeEvacuationMapping();
+}
+
+// Enhanced Evacuation Route Mapping Functions
+function initializeEvacuationMapping() {
+    initializeEvacuationMap();
+    initializeRouteControls();
+    initializeSafetyZones();
+    startEvacuationUpdates();
+}
+
+function initializeEvacuationMap() {
+    const mapElement = document.getElementById('evacuation-map');
+    if (!mapElement) return;
+    
+    // Initialize Leaflet map for evacuation routes
+    if (typeof L !== 'undefined') {
+        const evacuationMap = L.map('evacuation-map').setView([29.3919, 79.4542], 11);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(evacuationMap);
+        
+        // Add evacuation routes
+        addEvacuationRoutes(evacuationMap);
+        addSafetyZones(evacuationMap);
+        
+        // Store map reference
+        window.evacuationMapInstance = evacuationMap;
+    } else {
+        // Fallback: Add visual route indicators
+        addRouteVisualizations(mapElement);
+    }
+}
+
+function addEvacuationRoutes(map) {
+    const routes = [
+        {
+            name: 'Route A: Main Highway',
+            coords: [
+                [29.3919, 79.4542], // Nainital
+                [29.3500, 79.4000],
+                [29.2167, 79.5167]  // Haldwani
+            ],
+            color: '#22C55E',
+            status: 'clear'
+        },
+        {
+            name: 'Route B: Forest Road', 
+            coords: [
+                [29.3919, 79.4542], // Nainital
+                [29.4000, 79.4800],
+                [29.2167, 79.6500]  // Kathgodam
+            ],
+            color: '#F59E0B',
+            status: 'caution'
+        },
+        {
+            name: 'Route C: Emergency',
+            coords: [
+                [29.3919, 79.4542], // Nainital
+                [29.4100, 79.4700]  // Helipad
+            ],
+            color: '#EF4444',
+            status: 'emergency'
+        }
+    ];
+    
+    routes.forEach(route => {
+        const polyline = L.polyline(route.coords, {
+            color: route.color,
+            weight: 4,
+            opacity: 0.8,
+            className: `route-${route.status}`
+        }).addTo(map);
+        
+        polyline.bindPopup(`
+            <div class="route-popup">
+                <h4>${route.name}</h4>
+                <p>Status: ${route.status.toUpperCase()}</p>
+                <button onclick="selectRoute('${route.name}')">Select Route</button>
+            </div>
+        `);
+    });
+}
+
+function addSafetyZones(map) {
+    const safetyZones = [
+        {
+            name: 'Haldwani Relief Center',
+            coords: [29.2167, 79.5167],
+            capacity: '1,750 / 5,000',
+            status: 'available'
+        },
+        {
+            name: 'Kathgodam Medical Center',
+            coords: [29.2167, 79.6500],
+            capacity: '1,950 / 3,000',
+            status: 'limited'
+        },
+        {
+            name: 'Emergency Helipad',
+            coords: [29.4100, 79.4700],
+            capacity: '50 capacity',
+            status: 'standby'
+        }
+    ];
+    
+    safetyZones.forEach(zone => {
+        const marker = L.marker(zone.coords, {
+            icon: L.divIcon({
+                className: `safety-zone-marker ${zone.status}`,
+                html: `
+                    <div class="zone-marker-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                `,
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            })
+        }).addTo(map);
+        
+        marker.bindPopup(`
+            <div class="zone-popup">
+                <h4>${zone.name}</h4>
+                <p>Capacity: ${zone.capacity}</p>
+                <p>Status: ${zone.status.toUpperCase()}</p>
+            </div>
+        `);
+    });
+}
+
+function addRouteVisualizations(mapElement) {
+    // Add animated route lines as CSS elements for visual effect
+    const routeLines = [
+        { class: 'route-line-1', delay: 0 },
+        { class: 'route-line-2', delay: 1000 },
+        { class: 'route-line-3', delay: 2000 }
+    ];
+    
+    routeLines.forEach(route => {
+        const routeElement = document.createElement('div');
+        routeElement.className = `animated-route ${route.class}`;
+        routeElement.style.animationDelay = `${route.delay}ms`;
+        mapElement.appendChild(routeElement);
+    });
+}
+
+function initializeRouteControls() {
+    // Map view controls
+    const viewButtons = document.querySelectorAll('.view-btn');
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            viewButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const view = this.dataset.view;
+            switchMapView(view);
+        });
+    });
+    
+    // Route action buttons
+    const routeActionBtns = document.querySelectorAll('.route-action-btn');
+    routeActionBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const action = this.textContent.trim().toLowerCase();
+            
+            if (action.includes('optimize')) {
+                optimizeRoutes();
+            } else if (action.includes('broadcast')) {
+                broadcastAlert();
+            }
+        });
+    });
+    
+    // Route item clicks
+    const routeItems = document.querySelectorAll('.route-item-enhanced');
+    routeItems.forEach(item => {
+        item.addEventListener('click', function() {
+            routeItems.forEach(r => r.classList.remove('selected'));
+            this.classList.add('selected');
+            
+            const routeName = this.querySelector('.route-name').textContent;
+            showToast(`Selected ${routeName}`, 'success');
+        });
+    });
+}
+
+function switchMapView(view) {
+    const mapElement = document.getElementById('evacuation-map');
+    if (!mapElement) return;
+    
+    // Remove existing view classes
+    mapElement.classList.remove('routes-view', 'terrain-view', 'weather-view');
+    
+    // Add new view class
+    mapElement.classList.add(`${view}-view`);
+    
+    showToast(`Switched to ${view} view`, 'processing', 2000);
+    
+    // Update map visualization based on view
+    if (window.evacuationMapInstance) {
+        switch(view) {
+            case 'routes':
+                showRouteOverlays();
+                break;
+            case 'terrain':
+                showTerrainOverlays();
+                break;
+            case 'weather':
+                showWeatherOverlays();
+                break;
+        }
+    }
+}
+
+function showRouteOverlays() {
+    // Implementation for route overlay visualization
+    console.log('Showing route overlays');
+}
+
+function showTerrainOverlays() {
+    // Implementation for terrain overlay visualization
+    console.log('Showing terrain overlays');
+}
+
+function showWeatherOverlays() {
+    // Implementation for weather overlay visualization
+    console.log('Showing weather overlays');
+}
+
+function optimizeRoutes() {
+    showToast('Optimizing evacuation routes...', 'processing', 2000);
+    
+    // Simulate route optimization
+    setTimeout(() => {
+        showToast('Routes optimized successfully!', 'success');
+        updateRouteMetrics();
+    }, 2000);
+}
+
+function broadcastAlert() {
+    showToast('Broadcasting evacuation alert...', 'processing', 2000);
+    
+    // Simulate alert broadcast
+    setTimeout(() => {
+        showToast('Alert broadcasted to all emergency services', 'success');
+        updateAlertStatus();
+    }, 2000);
+}
+
+function selectRoute(routeName) {
+    showToast(`Route selected: ${routeName}`, 'success');
+    
+    // Highlight selected route on map
+    if (window.evacuationMapInstance) {
+        // Implementation to highlight specific route
+        console.log(`Highlighting route: ${routeName}`);
+    }
+}
+
+function initializeSafetyZones() {
+    // Animate capacity bars
+    const capacityBars = document.querySelectorAll('.capacity-fill');
+    capacityBars.forEach((bar, index) => {
+        setTimeout(() => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            bar.style.transition = 'width 2s ease-out';
+            
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        }, index * 300);
+    });
+    
+    // Add click handlers for safety zones
+    const zoneCards = document.querySelectorAll('.safety-zone-card');
+    zoneCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const zoneName = this.querySelector('.zone-name').textContent;
+            showZoneDetails(zoneName);
+        });
+    });
+}
+
+function showZoneDetails(zoneName) {
+    const details = {
+        'Haldwani Relief Center': {
+            facilities: ['Medical Aid', 'Food Distribution', 'Temporary Shelter'],
+            contact: '+91-5946-123456',
+            coordinator: 'District Collector Office'
+        },
+        'Kathgodam Medical Center': {
+            facilities: ['Emergency Care', 'Ambulance Service', 'Pharmacy'],
+            contact: '+91-5946-654321',
+            coordinator: 'Chief Medical Officer'
+        },
+        'Ramnagar Community Hall': {
+            facilities: ['Temporary Shelter', 'Community Kitchen'],
+            contact: '+91-5946-789012',
+            coordinator: 'Block Development Office'
+        }
+    };
+    
+    const detail = details[zoneName];
+    if (detail) {
+        const detailsHTML = `
+            <div style="max-width: 280px; text-align: left;">
+                <h4 style="color: #FF4500; margin-bottom: 0.5rem;">${zoneName}</h4>
+                <div style="margin-bottom: 0.75rem;">
+                    <strong>Facilities:</strong>
+                    <ul style="margin: 0.25rem 0 0 1rem; font-size: 0.85rem;">
+                        ${detail.facilities.map(facility => `<li>${facility}</li>`).join('')}
+                    </ul>
+                </div>
+                <div style="font-size: 0.85rem;">
+                    <p><strong>Contact:</strong> ${detail.contact}</p>
+                    <p><strong>Coordinator:</strong> ${detail.coordinator}</p>
+                </div>
+            </div>
+        `;
+        
+        showEnhancedToast(detailsHTML, 'processing', 6000);
+    }
+}
+
+function updateRouteMetrics() {
+    // Update route timing and capacity metrics
+    const metrics = document.querySelectorAll('.route-metrics .metric span:last-child');
+    metrics.forEach(metric => {
+        if (metric.textContent.includes('min')) {
+            const currentTime = parseInt(metric.textContent);
+            const optimizedTime = Math.max(10, currentTime - Math.floor(Math.random() * 5) - 2);
+            metric.textContent = optimizedTime + ' min';
+            metric.style.color = '#22C55E';
+        }
+    });
+}
+
+function updateAlertStatus() {
+    // Update status indicators to show alert has been sent
+    const statusIndicators = document.querySelectorAll('.status-indicator');
+    statusIndicators.forEach(indicator => {
+        const statusText = indicator.querySelector('span:last-child');
+        if (statusText) {
+            statusText.textContent = 'Alert Broadcasted';
+            indicator.style.color = '#EF4444';
+        }
+    });
+}
+
+function startEvacuationUpdates() {
+    // Simulate real-time updates
+    setInterval(() => {
+        updateEvacuationData();
+    }, 45000);
+    
+    // Update capacity numbers periodically
+    setInterval(() => {
+        updateCapacityNumbers();
+    }, 30000);
+    
+    // Update route conditions
+    setInterval(() => {
+        updateRouteConditions();
+    }, 60000);
+}
+
+function updateEvacuationData() {
+    // Update evacuation analytics
+    const analyticsValues = document.querySelectorAll('.analytics-card .data-value');
+    analyticsValues.forEach(value => {
+        if (value.textContent.includes(',')) {
+            const currentNum = parseInt(value.textContent.replace(',', ''));
+            const newNum = currentNum + Math.floor(Math.random() * 50) + 10;
+            value.textContent = newNum.toLocaleString();
+        } else if (value.textContent.includes('min')) {
+            const currentTime = parseInt(value.textContent);
+            const variation = Math.floor(Math.random() * 4) - 2;
+            const newTime = Math.max(10, currentTime + variation);
+            value.textContent = newTime + ' min';
+        } else if (value.textContent.includes('%')) {
+            const currentPercent = parseInt(value.textContent);
+            const variation = Math.floor(Math.random() * 10) - 5;
+            const newPercent = Math.max(50, Math.min(100, currentPercent + variation));
+            value.textContent = newPercent + '%';
+        }
+    });
+}
+
+function updateCapacityNumbers() {
+    const capacityTexts = document.querySelectorAll('.capacity-text');
+    capacityTexts.forEach(text => {
+        const parts = text.textContent.split(' / ');
+        if (parts.length === 2) {
+            const current = parseInt(parts[0].replace(',', ''));
+            const max = parseInt(parts[1].replace(',', ''));
+            
+            if (current < max) {
+                const increase = Math.floor(Math.random() * 20) + 5;
+                const newCurrent = Math.min(max, current + increase);
+                text.textContent = `${newCurrent.toLocaleString()} / ${max.toLocaleString()}`;
+                
+                // Update capacity bar
+                const capacityBar = text.parentNode.querySelector('.capacity-fill');
+                if (capacityBar) {
+                    const percentage = (newCurrent / max) * 100;
+                    capacityBar.style.width = percentage + '%';
+                    
+                    // Update status if needed
+                    if (percentage >= 100) {
+                        updateZoneStatus(text.closest('.safety-zone-card'), 'full');
+                    } else if (percentage >= 80) {
+                        updateZoneStatus(text.closest('.safety-zone-card'), 'limited');
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateZoneStatus(zoneCard, newStatus) {
+    const statusElement = zoneCard.querySelector('.zone-status');
+    const statusText = statusElement.querySelector('span:last-child');
+    const statusDot = statusElement.querySelector('.status-dot');
+    
+    // Remove old status classes
+    statusElement.classList.remove('available', 'limited', 'full');
+    zoneCard.classList.remove('available', 'limited', 'full');
+    
+    // Add new status
+    statusElement.classList.add(newStatus);
+    zoneCard.classList.add(newStatus);
+    statusText.textContent = newStatus.toUpperCase();
+    
+    // Update capacity bar color if full
+    if (newStatus === 'full') {
+        const capacityBar = zoneCard.querySelector('.capacity-fill');
+        if (capacityBar) {
+            capacityBar.classList.add('full');
+        }
+    }
+}
+
+function updateRouteConditions() {
+    const conditionValues = document.querySelectorAll('.condition-value');
+    conditionValues.forEach(value => {
+        if (Math.random() < 0.3) {
+            const conditions = ['good', 'fair', 'caution'];
+            const currentClass = value.className.split(' ').find(c => conditions.includes(c));
+            const newCondition = conditions[Math.floor(Math.random() * conditions.length)];
+            
+            if (currentClass) {
+                value.classList.remove(currentClass);
+            }
+            value.classList.add(newCondition);
+            
+            // Update condition text based on type
+            if (value.textContent.includes('(')) {
+                const baseText = value.textContent.split('(')[0].trim();
+                const ratings = { good: '8/10', fair: '6/10', caution: '4/10' };
+                const speeds = { good: '10 km/h', fair: '15 km/h', caution: '20 km/h' };
+                
+                if (baseText === 'Good' || baseText === 'Fair' || baseText === 'Poor') {
+                    const newRating = ratings[newCondition] || '7/10';
+                    value.textContent = `${newCondition.charAt(0).toUpperCase() + newCondition.slice(1)} (${newRating})`;
+                } else if (value.textContent.includes('km/h')) {
+                    const newSpeed = speeds[newCondition] || '12 km/h';
+                    value.textContent = `${newCondition.charAt(0).toUpperCase() + newCondition.slice(1)} (${newSpeed})`;
+                }
+            }
+        }
+    });
 }
 
 // Early Warning & Alert System Functions
