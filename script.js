@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize fire theme effects
     initializeForestFireTheme();
     initializeFireInteractions();
+    
+    // Initialize enhanced data sources
+    initializeDataSourcesInteractions();
 
     startDataUpdates();
 });
@@ -191,6 +194,213 @@ function initializeNavigation() {
             }
         });
     });
+}
+
+// Enhanced Data Sources interactions
+function initializeDataSourcesInteractions() {
+    const sourceCards = document.querySelectorAll('.source-card');
+    
+    sourceCards.forEach(card => {
+        // Add click handler for detailed information
+        card.addEventListener('click', function() {
+            showDataSourceDetails(this);
+        });
+        
+        // Add keyboard support
+        card.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                showDataSourceDetails(this);
+            }
+        });
+        
+        // Enhanced hover effects with sound simulation
+        card.addEventListener('mouseenter', function() {
+            const icon = this.querySelector('.source-icon i');
+            const statusDot = this.querySelector('.status-dot');
+            
+            // Add special effects based on data source type
+            const sourceType = this.dataset.source;
+            addSourceTypeEffect(this, sourceType);
+            
+            // Enhanced status dot animation
+            if (statusDot) {
+                statusDot.style.animationDuration = '0.5s';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            const statusDot = this.querySelector('.status-dot');
+            if (statusDot) {
+                statusDot.style.animationDuration = '2s';
+            }
+        });
+    });
+    
+    // Simulate real-time data updates
+    startDataSourceUpdates();
+}
+
+function showDataSourceDetails(card) {
+    const sourceType = card.dataset.source;
+    const metadata = card.querySelector('.data-metadata');
+    const statusElement = card.querySelector('.source-status span:last-child');
+    
+    const sourceDetails = {
+        satellite: {
+            name: 'Satellite Data',
+            description: 'High-resolution Earth observation data from MODIS and Sentinel-2 satellites',
+            features: ['Fire detection', 'Burn scar mapping', 'Smoke detection', 'Land cover classification'],
+            lastUpdate: '2 minutes ago',
+            dataPoints: '1.2M today',
+            accuracy: '96.8%'
+        },
+        weather: {
+            name: 'Weather Data',
+            description: 'Comprehensive atmospheric data from ERA5 reanalysis system',
+            features: ['Temperature', 'Humidity', 'Wind speed/direction', 'Precipitation'],
+            lastUpdate: '15 minutes ago',
+            dataPoints: '48K today',
+            accuracy: '94.2%'
+        },
+        vegetation: {
+            name: 'Vegetation Index',
+            description: 'Normalized Difference Vegetation Index from Sentinel-2 imagery',
+            features: ['Vegetation health', 'Moisture content', 'Biomass estimation', 'Fuel load assessment'],
+            lastUpdate: '2 days ago',
+            dataPoints: '850K pixels',
+            accuracy: '91.5%'
+        },
+        terrain: {
+            name: 'Terrain Elevation',
+            description: 'Digital elevation model from NASA Shuttle Radar Topography Mission',
+            features: ['Elevation data', 'Slope calculation', 'Aspect analysis', 'Drainage patterns'],
+            lastUpdate: 'Static dataset',
+            dataPoints: '2.8M points',
+            accuracy: '99.1%'
+        },
+        human: {
+            name: 'Human Activity',
+            description: 'Settlement and infrastructure data from multiple sources',
+            features: ['Population density', 'Road networks', 'Built-up areas', 'Land use patterns'],
+            lastUpdate: '1 month ago',
+            dataPoints: '125K features',
+            accuracy: '78.3%'
+        },
+        sensors: {
+            name: 'Ground Sensors',
+            description: 'Real-time environmental monitoring from weather station network',
+            features: ['Temperature', 'Humidity', 'Wind', 'Air quality'],
+            lastUpdate: '30 seconds ago',
+            dataPoints: '2.4K today',
+            accuracy: '98.7%'
+        }
+    };
+    
+    const details = sourceDetails[sourceType];
+    
+    // Create enhanced toast with detailed information
+    const detailsHTML = `
+        <div style="max-width: 300px; text-align: left;">
+            <h4 style="color: #FF4500; margin-bottom: 0.5rem;">${details.name}</h4>
+            <p style="margin-bottom: 0.75rem; font-size: 0.9rem;">${details.description}</p>
+            <div style="margin-bottom: 0.75rem;">
+                <strong>Features:</strong>
+                <ul style="margin: 0.25rem 0 0 1rem; font-size: 0.85rem;">
+                    ${details.features.map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem;">
+                <div><strong>Last Update:</strong><br>${details.lastUpdate}</div>
+                <div><strong>Data Points:</strong><br>${details.dataPoints}</div>
+                <div><strong>Accuracy:</strong><br>${details.accuracy}</div>
+                <div><strong>Status:</strong><br>${statusElement.textContent}</div>
+            </div>
+        </div>
+    `;
+    
+    showEnhancedToast(detailsHTML, 'processing', 8000);
+    
+    // Add visual feedback
+    card.style.transform = 'translateY(-12px) rotateX(5deg) rotateY(2deg) scale(1.02)';
+    card.style.boxShadow = '0 25px 50px rgba(255, 69, 0, 0.35)';
+    
+    setTimeout(() => {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+    }, 1000);
+}
+
+function addSourceTypeEffect(card, sourceType) {
+    const icon = card.querySelector('.source-icon');
+    
+    // Add type-specific visual effects
+    switch(sourceType) {
+        case 'satellite':
+            icon.style.animation = 'iconPulse 1s ease-in-out, satelliteOrbit 3s linear infinite';
+            break;
+        case 'weather':
+            icon.style.animation = 'iconPulse 1s ease-in-out, weatherSway 2s ease-in-out infinite';
+            break;
+        case 'vegetation':
+            icon.style.animation = 'iconPulse 1s ease-in-out, vegetationGrow 2.5s ease-in-out infinite';
+            break;
+        case 'terrain':
+            icon.style.animation = 'iconPulse 1s ease-in-out, terrainShift 4s ease-in-out infinite';
+            break;
+        case 'human':
+            icon.style.animation = 'iconPulse 1s ease-in-out, humanActivity 1.5s ease-in-out infinite';
+            break;
+        case 'sensors':
+            icon.style.animation = 'iconPulse 1s ease-in-out, sensorScan 2s linear infinite';
+            break;
+    }
+    
+    setTimeout(() => {
+        icon.style.animation = 'iconPulse 4s ease-in-out infinite';
+    }, 3000);
+}
+
+function startDataSourceUpdates() {
+    // Simulate real-time updates
+    setInterval(() => {
+        const sourceCards = document.querySelectorAll('.source-card');
+        const randomCard = sourceCards[Math.floor(Math.random() * sourceCards.length)];
+        
+        if (Math.random() < 0.3) {
+            // Flash the status dot briefly
+            const statusDot = randomCard.querySelector('.status-dot');
+            if (statusDot) {
+                statusDot.style.transform = 'scale(1.5)';
+                statusDot.style.boxShadow = '0 0 20px currentColor';
+                
+                setTimeout(() => {
+                    statusDot.style.transform = '';
+                    statusDot.style.boxShadow = '0 0 10px currentColor';
+                }, 300);
+            }
+        }
+    }, 5000);
+}
+
+function showEnhancedToast(htmlContent, type = 'success', duration = 3000) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = htmlContent;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+        setTimeout(() => {
+            if (container.contains(toast)) {
+                container.removeChild(toast);
+            }
+        }, 300);
+    }, duration);
 }
 
 // Initialize maps

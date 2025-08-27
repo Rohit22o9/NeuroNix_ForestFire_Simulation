@@ -619,82 +619,112 @@
         </div>
         <div class="section-content">
             <div class="data-sources-grid">
-                <div class="source-card" data-source="satellite">
+                <div class="source-card" data-source="satellite" role="button" tabindex="0" aria-label="Satellite Data Source - Active">
                     <div class="source-icon">
-                        <i class="fas fa-satellite"></i>
+                        <i class="fas fa-satellite" aria-hidden="true"></i>
                     </div>
                     <div class="source-info">
                         <h3>Satellite Data</h3>
-                        <p>MODIS, Sentinel-2</p>
+                        <p>MODIS & Sentinel-2 Imagery</p>
                         <div class="source-status active">
-                            <span class="status-dot"></span>
-                            Active
+                            <span class="status-dot" aria-hidden="true"></span>
+                            <span>Active</span>
                         </div>
                     </div>
+                    <div class="data-metadata" style="display: none;">
+                        <span data-update-frequency="15min">15min updates</span>
+                        <span data-coverage="global">Global coverage</span>
+                        <span data-resolution="250m">250m resolution</span>
+                    </div>
                 </div>
-                <div class="source-card" data-source="weather">
+                <div class="source-card" data-source="weather" role="button" tabindex="0" aria-label="Weather Data Source - Active">
                     <div class="source-icon">
-                        <i class="fas fa-cloud-sun"></i>
+                        <i class="fas fa-cloud-sun" aria-hidden="true"></i>
                     </div>
                     <div class="source-info">
                         <h3>Weather Data</h3>
-                        <p>ERA5 (ECMWF)</p>
+                        <p>ERA5 Reanalysis (ECMWF)</p>
                         <div class="source-status active">
-                            <span class="status-dot"></span>
-                            Active
+                            <span class="status-dot" aria-hidden="true"></span>
+                            <span>Active</span>
                         </div>
                     </div>
+                    <div class="data-metadata" style="display: none;">
+                        <span data-update-frequency="1hr">Hourly updates</span>
+                        <span data-coverage="regional">Regional coverage</span>
+                        <span data-resolution="31km">31km resolution</span>
+                    </div>
                 </div>
-                <div class="source-card" data-source="vegetation">
+                <div class="source-card" data-source="vegetation" role="button" tabindex="0" aria-label="Vegetation Data Source - Active">
                     <div class="source-icon">
-                        <i class="fas fa-leaf"></i>
+                        <i class="fas fa-leaf" aria-hidden="true"></i>
                     </div>
                     <div class="source-info">
-                        <h3>Vegetation</h3>
+                        <h3>Vegetation Index</h3>
                         <p>NDVI from Sentinel-2</p>
                         <div class="source-status active">
-                            <span class="status-dot"></span>
-                            Active
+                            <span class="status-dot" aria-hidden="true"></span>
+                            <span>Active</span>
                         </div>
                     </div>
+                    <div class="data-metadata" style="display: none;">
+                        <span data-update-frequency="5days">5-day updates</span>
+                        <span data-coverage="regional">Regional coverage</span>
+                        <span data-resolution="10m">10m resolution</span>
+                    </div>
                 </div>
-                <div class="source-card" data-source="terrain">
+                <div class="source-card" data-source="terrain" role="button" tabindex="0" aria-label="Terrain Data Source - Active">
                     <div class="source-icon">
-                        <i class="fas fa-mountain"></i>
+                        <i class="fas fa-mountain" aria-hidden="true"></i>
                     </div>
                     <div class="source-info">
-                        <h3>Terrain</h3>
+                        <h3>Terrain Elevation</h3>
                         <p>SRTM DEM (NASA)</p>
                         <div class="source-status active">
-                            <span class="status-dot"></span>
-                            Active
+                            <span class="status-dot" aria-hidden="true"></span>
+                            <span>Active</span>
                         </div>
                     </div>
+                    <div class="data-metadata" style="display: none;">
+                        <span data-update-frequency="static">Static dataset</span>
+                        <span data-coverage="global">Global coverage</span>
+                        <span data-resolution="30m">30m resolution</span>
+                    </div>
                 </div>
-                <div class="source-card" data-source="human">
+                <div class="source-card" data-source="human" role="button" tabindex="0" aria-label="Human Activity Data Source - Limited">
                     <div class="source-icon">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-users" aria-hidden="true"></i>
                     </div>
                     <div class="source-info">
                         <h3>Human Activity</h3>
-                        <p>GHSL, OSM</p>
+                        <p>GHSL & OpenStreetMap</p>
                         <div class="source-status warning">
-                            <span class="status-dot"></span>
-                            Limited
+                            <span class="status-dot" aria-hidden="true"></span>
+                            <span>Limited</span>
                         </div>
+                    </div>
+                    <div class="data-metadata" style="display: none;">
+                        <span data-update-frequency="monthly">Monthly updates</span>
+                        <span data-coverage="partial">Partial coverage</span>
+                        <span data-resolution="1km">1km resolution</span>
                     </div>
                 </div>
-                <div class="source-card" data-source="sensors">
+                <div class="source-card" data-source="sensors" role="button" tabindex="0" aria-label="Sensor Data Source - 12 Active Stations">
                     <div class="source-icon">
-                        <i class="fas fa-thermometer"></i>
+                        <i class="fas fa-thermometer-half" aria-hidden="true"></i>
                     </div>
                     <div class="source-info">
-                        <h3>Sensors</h3>
-                        <p>Ground Weather Stations</p>
+                        <h3>Ground Sensors</h3>
+                        <p>Weather Station Network</p>
                         <div class="source-status active">
-                            <span class="status-dot"></span>
-                            12 Active
+                            <span class="status-dot" aria-hidden="true"></span>
+                            <span>12 Active</span>
                         </div>
+                    </div>
+                    <div class="data-metadata" style="display: none;">
+                        <span data-update-frequency="5min">5-min updates</span>
+                        <span data-coverage="local">Local coverage</span>
+                        <span data-resolution="point">Point measurements</span>
                     </div>
                 </div>
             </div>
