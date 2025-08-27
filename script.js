@@ -1747,3 +1747,389 @@ document.addEventListener('keydown', function(e) {
         downloadReport();
     }
 });
+
+// Initialize new dashboard features
+document.addEventListener('DOMContentLoaded', function() {
+    initializeNewFeatures();
+});
+
+function initializeNewFeatures() {
+    // Early Warning System
+    initializeAlertSystem();
+    
+    // Community Engagement
+    initializeCommunityFeatures();
+    
+    // VR/AR Visualization
+    initializeVRFeatures();
+    
+    // Fire Reporting
+    initializeReporting();
+    
+    // Resource Optimization
+    updateResourceMetrics();
+    
+    // Environmental Impact
+    animateImpactBars();
+    
+    // Recovery Timeline
+    initializeRecoveryTimeline();
+}
+
+// Early Warning & Alert System Functions
+function initializeAlertSystem() {
+    const alertButtons = document.querySelectorAll('.alert-btn');
+    
+    alertButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const btnType = this.classList.contains('sms-btn') ? 'SMS' : 
+                           this.classList.contains('whatsapp-btn') ? 'WhatsApp' : 'Email';
+            
+            showToast(`${btnType} alert sent successfully!`, 'success');
+            
+            // Add visual feedback
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+    });
+    
+    // Simulate alert updates
+    setInterval(updateAlertStatus, 30000);
+}
+
+function updateAlertStatus() {
+    const alertBox = document.querySelector('.critical-alert-box');
+    if (alertBox && Math.random() < 0.3) {
+        alertBox.style.animation = 'alertPulse 1s ease-in-out 3 alternate';
+        showToast('Alert status updated', 'warning', 2000);
+    }
+}
+
+// Community & Volunteer Engagement Functions
+function initializeCommunityFeatures() {
+    const simulationBtn = document.querySelector('.simulation-btn');
+    const awarenessBtn = document.querySelector('.awareness-btn');
+    const volunteerBtn = document.querySelector('.volunteer-btn');
+    
+    if (simulationBtn) {
+        simulationBtn.addEventListener('click', function() {
+            showToast('Starting fire behavior simulation...', 'processing', 2000);
+            // Animate the forest diagram
+            const fireSource = document.querySelector('.fire-source');
+            if (fireSource) {
+                fireSource.style.animation = 'fireFlicker 0.5s infinite alternate';
+            }
+            
+            setTimeout(() => {
+                showToast('Simulation complete: Fire would spread 200m east due to wind', 'success');
+            }, 2000);
+        });
+    }
+    
+    if (awarenessBtn) {
+        awarenessBtn.addEventListener('click', function() {
+            const questions = [
+                "What is the minimum width for an effective fireline?",
+                "Which wind direction poses the highest risk?",
+                "How does slope angle affect fire spread rate?"
+            ];
+            const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+            showToast(`Quiz: ${randomQuestion}`, 'processing', 4000);
+        });
+    }
+    
+    if (volunteerBtn) {
+        volunteerBtn.addEventListener('click', function() {
+            showToast('Volunteer registration form opened', 'success');
+            // Could open a modal or redirect in a real app
+        });
+    }
+}
+
+// VR/AR Visualization Functions
+function initializeVRFeatures() {
+    const vrControls = document.querySelectorAll('.vr-control-btn');
+    const canvas = document.getElementById('fire3d-canvas');
+    
+    vrControls.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const btnText = this.textContent.trim();
+            
+            if (btnText.includes('3D Sim')) {
+                showToast('Loading 3D fire simulation...', 'processing', 2000);
+                animate3DCanvas(canvas);
+            } else if (btnText.includes('VR Mode')) {
+                showToast('VR mode requires VR headset', 'warning');
+            } else if (btnText.includes('AR View')) {
+                showToast('AR view requires camera permissions', 'warning');
+            }
+        });
+    });
+}
+
+function animate3DCanvas(canvas) {
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    let frame = 0;
+    
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Create animated fire effect
+        const gradient = ctx.createRadialGradient(
+            canvas.width/2, canvas.height - 50, 0,
+            canvas.width/2, canvas.height - 50, 150 + Math.sin(frame/10) * 20
+        );
+        gradient.addColorStop(0, `rgba(255, 69, 0, ${0.8 + Math.sin(frame/5) * 0.2})`);
+        gradient.addColorStop(0.5, `rgba(255, 140, 0, ${0.5 + Math.sin(frame/7) * 0.2})`);
+        gradient.addColorStop(1, 'rgba(255, 140, 0, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Add particle effects
+        for (let i = 0; i < 20; i++) {
+            const x = canvas.width/2 + Math.sin(frame/10 + i) * 50;
+            const y = canvas.height - 100 + Math.sin(frame/8 + i) * 30;
+            const size = 2 + Math.sin(frame/6 + i) * 2;
+            
+            ctx.fillStyle = `rgba(255, ${100 + Math.sin(frame/4 + i) * 50}, 0, 0.7)`;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        frame++;
+        
+        if (frame < 120) {
+            requestAnimationFrame(draw);
+        }
+    }
+    
+    draw();
+}
+
+// Fire Reporting Functions
+function initializeReporting() {
+    const reportForm = document.querySelector('.fire-report-form');
+    const fileUpload = document.getElementById('report-image');
+    
+    if (reportForm) {
+        reportForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const location = document.getElementById('report-location').value;
+            const description = document.getElementById('report-description').value;
+            
+            if (!location || !description) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            showToast('Fire report submitted successfully!', 'success');
+            showToast('Emergency services have been notified', 'processing', 3000);
+            
+            // Reset form
+            this.reset();
+            
+            // Add to recent reports (simulation)
+            setTimeout(() => {
+                addRecentReport(location, description);
+            }, 1000);
+        });
+    }
+    
+    if (fileUpload) {
+        fileUpload.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                showToast(`File "${fileName}" uploaded successfully`, 'success');
+            }
+        });
+    }
+}
+
+function addRecentReport(location, description) {
+    const reportsList = document.querySelector('.reports-list');
+    if (!reportsList) return;
+    
+    const newReport = document.createElement('div');
+    newReport.className = 'report-item urgent';
+    newReport.innerHTML = `
+        <div class="report-status">
+            <i class="fas fa-exclamation-circle"></i>
+            <span class="status-text">NEW</span>
+        </div>
+        <div class="report-content">
+            <div class="report-location">${location}</div>
+            <div class="report-description">${description}</div>
+            <div class="report-meta">
+                <span class="reporter">By: You</span>
+                <span class="report-time">Just now</span>
+            </div>
+        </div>
+    `;
+    
+    reportsList.insertBefore(newReport, reportsList.firstChild);
+    
+    // Remove oldest report if more than 5
+    const reports = reportsList.querySelectorAll('.report-item');
+    if (reports.length > 5) {
+        reports[reports.length - 1].remove();
+    }
+}
+
+// Resource Optimization Functions
+function updateResourceMetrics() {
+    setInterval(() => {
+        const efficiencyCard = document.querySelector('.summary-card .card-number');
+        if (efficiencyCard && Math.random() < 0.1) {
+            const currentEfficiency = parseInt(efficiencyCard.textContent);
+            const newEfficiency = Math.max(75, Math.min(95, currentEfficiency + (Math.random() - 0.5) * 5));
+            efficiencyCard.textContent = Math.round(newEfficiency) + '%';
+        }
+        
+        // Update deployment status
+        const statusBadges = document.querySelectorAll('.status-badge');
+        statusBadges.forEach(badge => {
+            if (Math.random() < 0.05) {
+                badge.style.animation = 'pulse 1s ease-in-out 2';
+            }
+        });
+    }, 10000);
+}
+
+// Environmental Impact Functions
+function animateImpactBars() {
+    const progressBars = document.querySelectorAll('.progress-bar');
+    
+    progressBars.forEach((bar, index) => {
+        setTimeout(() => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            bar.style.transition = 'width 2s ease-out';
+            
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        }, index * 300);
+    });
+    
+    // Animate CO2 counter
+    animateCO2Counter();
+}
+
+function animateCO2Counter() {
+    const co2Value = document.querySelector('.emission-value');
+    if (!co2Value) return;
+    
+    const finalValue = 1240;
+    const duration = 2000;
+    const startTime = Date.now();
+    
+    function updateCounter() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentValue = Math.round(finalValue * progress);
+        
+        co2Value.textContent = currentValue.toLocaleString();
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        }
+    }
+    
+    updateCounter();
+}
+
+// Recovery Timeline Functions
+function initializeRecoveryTimeline() {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    
+    // Animate timeline items on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '0';
+                entry.target.style.transform = 'translateX(-20px)';
+                entry.target.style.transition = 'all 0.6s ease-out';
+                
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateX(0)';
+                }, 100);
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    timelineItems.forEach(item => observer.observe(item));
+}
+
+// AI Explainability Functions
+function updateExplainabilityFactors() {
+    const factors = document.querySelectorAll('.factor-item');
+    
+    factors.forEach(factor => {
+        const factorFill = factor.querySelector('.factor-fill');
+        const contribution = factor.querySelector('.factor-contribution');
+        
+        if (Math.random() < 0.1) {
+            const currentWidth = parseInt(factorFill.style.width);
+            const variation = (Math.random() - 0.5) * 5;
+            const newWidth = Math.max(5, Math.min(35, currentWidth + variation));
+            
+            factorFill.style.width = newWidth + '%';
+            contribution.textContent = '+' + Math.round(newWidth) + '%';
+        }
+    });
+}
+
+// Start periodic updates for dynamic content
+setInterval(updateExplainabilityFactors, 15000);
+
+// Add smooth scrolling for internal navigation
+function scrollToNewSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showToast(`Navigating to ${sectionId.replace('-', ' ')} section`, 'processing', 1500);
+    }
+}
+
+// Enhanced hover effects for new sections
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects to cards
+    const cards = document.querySelectorAll('.summary-card, .impact-item, .factor-item, .feature-item');
+    
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.transition = 'all 0.3s ease';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+
+// Add click handlers for resource table rows
+document.addEventListener('DOMContentLoaded', function() {
+    const resourceRows = document.querySelectorAll('.resource-table tbody tr');
+    
+    resourceRows.forEach(row => {
+        row.addEventListener('click', function() {
+            const resourceType = this.querySelector('.resource-item span').textContent;
+            showToast(`Viewing details for ${resourceType}`, 'processing', 2000);
+            
+            // Add visual feedback
+            this.style.backgroundColor = 'rgba(255, 69, 0, 0.1)';
+            setTimeout(() => {
+                this.style.backgroundColor = '';
+            }, 500);
+        });
+    });
+});
