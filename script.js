@@ -2003,11 +2003,20 @@ function initializeEvacuationMap() {
     
     // Initialize Leaflet map for evacuation routes
     if (typeof L !== 'undefined') {
-        const evacuationMap = L.map('evacuation-map').setView([29.3919, 79.4542], 11);
+        const evacuationMap = L.map('evacuation-map', {
+            zoomControl: true,
+            attributionControl: true
+        }).setView([29.3919, 79.4542], 11);
         
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
         }).addTo(evacuationMap);
+        
+        // Force map to invalidate size after initialization
+        setTimeout(() => {
+            evacuationMap.invalidateSize();
+        }, 100);
         
         // Add evacuation routes
         addEvacuationRoutes(evacuationMap);
@@ -2015,6 +2024,13 @@ function initializeEvacuationMap() {
         
         // Store map reference
         window.evacuationMapInstance = evacuationMap;
+        
+        // Add resize handler
+        window.addEventListener('resize', () => {
+            setTimeout(() => {
+                evacuationMap.invalidateSize();
+            }, 100);
+        });
     } else {
         // Fallback: Add visual route indicators
         addRouteVisualizations(mapElement);
